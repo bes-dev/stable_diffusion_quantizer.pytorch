@@ -1,0 +1,69 @@
+{
+    "model": {
+        "path": "/home/sergei/.cache/huggingface/diffusers/models--CompVis--stable-diffusion-v1-4/snapshots/ffa6ee9063764ae9c597155d474cb958bc511b98/"
+    },
+    "trainset": {
+        "path": "/home/sergei/work/datasets/tti_test/00000.tar",
+        "batch_size": 1,
+        "num_workers": 4,
+        "params": {
+            "detshuffle": 100,
+            "decode": "pil",
+            "to_tuple": "png;jpg txt",
+            "image_size": [512, 512],
+            "normalize": true,
+            "bgr2rgb": false,
+            "vrange": [0.0, 255.0],
+            "padding": "max_length",
+            "truncation": true,
+            "return_tensors": "pt"
+        }
+    },
+    "valset": {
+        "path": "/home/sergei/work/datasets/tti_test/00000.tar",
+        "batch_size": 1,
+        "num_workers": 4,
+        "params": {
+            "detshuffle": 100,
+            "decode": "pil",
+            "to_tuple": "png;jpg txt",
+            "image_size": [512, 512],
+            "normalize": true,
+            "bgr2rgb": false,
+            "vrange": [0.0, 255.0],
+            "padding": "max_length",
+            "truncation": true,
+            "return_tensors": "pt"
+        }
+    },
+    "initset": {
+        "path": "/home/sergei/work/datasets/tti_test/00000.tar",
+        "batch_size": 1,
+        "num_workers": 4,
+        "params": {
+            "detshuffle": 100,
+            "decode": "pil",
+            "to_tuple": "png;jpg txt",
+            "image_size": [512, 512],
+            "normalize": true,
+            "bgr2rgb": false,
+            "vrange": [0.0, 255.0],
+            "padding": "max_length",
+            "truncation": true,
+            "return_tensors": "pt"
+        }
+    },
+    "optimizer": {
+        "lr": 1e-4,
+        "adam_beta1": 0.9,
+        "adam_beta2": 0.999,
+        "adam_weight_decay": 1e-2,
+        "adam_epsilon": 1e-08,
+        "epochs": 100
+    },
+    "trainer": {
+        "monitor": "loss_val",
+        "monitor_mode": "min",
+        "initialize_quantization": true
+    }
+}

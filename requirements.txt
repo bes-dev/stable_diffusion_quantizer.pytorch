@@ -1,0 +1,8 @@
+torch
+pytorch-lightning
+tqdm
+diffusers
+transformers
+opencv-python
+webdataset
+img2dataset
