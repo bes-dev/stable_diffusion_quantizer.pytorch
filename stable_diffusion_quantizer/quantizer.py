@@ -72,6 +72,12 @@ class StableDiffusionQuantizer(pl.LightningModule):
                     num_workers = cfg["initset"]["num_workers"]
                 )
             )
+        self.distillation = False
+        if cfg["trainer"]["distillation"]:
+            self.distillation = True
+            self.distillation_weight = cfg["trainer"]["distillation_weight"]
+            self.unet_teacher = UNet2DConditionModel(**cfg["unet"]["cfg"])
+            self.unet_teacher.load_state_dict(torch.load(cfg["unet"]["ckpt"], map_location="cpu"))
 
     def _log_loss(self, loss, on_step=True, on_epoch=False, prog_bar=True, logger=True, exclude=["loss"]):
         for k, v in loss.items():
@@ -101,17 +107,25 @@ class StableDiffusionQuantizer(pl.LightningModule):
 
         # Get the text embedding for conditioning
         encoder_hidden_states = self.text_encoder.text_model(input_ids)[0]
+
         return noisy_latents, timesteps, encoder_hidden_states
 
     # generic step
     def step(self, batch, batch_nb):
         image, input_ids = batch
         # Predict the noise residual
-        noise_pred = self.unet(*self.make_unet_input(image, input_ids))["sample"]
+        noisy_latents, timesteps, encoder_hidden_states = self.make_unet_input(image, input_ids)
+        noise_pred = self.unet(noisy_latents, timesteps, encoder_hidden_states)["sample"]
         # compute loss
         loss = {}
         loss["mse"] = F.mse_loss(noise_pred, noise, reduction="none").mean([1, 2, 3]).mean()
-        return {"loss": loss["mse"]}
+        loss["loss"] = loss["mse"]
+        if self.distillation:
+            with torch.no_grad():
+                noise_pred_teacher = self.unet_teacher(noisy_latents, timesteps, encoder_hidden_states)["sample"]
+            loss["mse_distillation"] = F.mse_loss(noise_pred, noise_pred_teacher, reduction="none").mean([1, 2, 3]).mean()
+            loss["loss"] += self.distillation_weight * loss["mse_distillation"]
+        return loss
 
     def get_dataloader(self, dataset, batch_size, num_workers):
         return torch.utils.data.DataLoader(

@@ -64,6 +64,8 @@
     "trainer": {
         "monitor": "loss_val",
         "monitor_mode": "min",
-        "initialize_quantization": true
+        "initialize_quantization": true,
+        "distillation": true
+        "distillation_weight": 0.5
     }
 }
