@@ -2,7 +2,7 @@ import torch
 import numpy as np
 import webdataset as wds
 # utils
-from stable_diffusion_ext.utils import image_to_tensor
+from stable_diffusion_quantizer.utils import image_to_tensor
 
 
 def image_preprocess(bgr2rgb=True, normalize=True, vrange=(0.0, 255.0), image_size=None, return_tensors="pt"):

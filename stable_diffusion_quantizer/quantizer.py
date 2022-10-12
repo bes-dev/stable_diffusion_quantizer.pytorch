@@ -9,17 +9,17 @@ import torch.nn as nn
 import torch.nn.functional as F
 import pytorch_lightning as pl
 # dataset
-from stable_diffusion_ext.dataset import DataPipelineTTI
+from stable_diffusion_quantizer.dataset import DataPipelineTTI
 # scheduler
 from diffusers import DDPMScheduler, LMSDiscreteScheduler
 # tokenizer
 from transformers import CLIPTokenizer, CLIPModel
 # models
-from stable_diffusion_ext.models import UNet2DConditionModel, AutoencoderKL
+from stable_diffusion_quantizer.models import UNet2DConditionModel, AutoencoderKL
 # quantization
-from stable_diffusion_ext.models import QConv2d, QLinear, Calibrator
+from stable_diffusion_quantizer.models import QConv2d, QLinear, Calibrator
 # utils
-from stable_diffusion_ext.utils import image_to_tensor, get_names_by_type, get_layer_by_name, set_layer_by_name
+from stable_diffusion_quantizer.utils import image_to_tensor, get_names_by_type, get_layer_by_name, set_layer_by_name
 from tqdm.autonotebook import tqdm
 
 

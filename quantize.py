@@ -3,14 +3,14 @@ import os
 import json
 import torch
 import pytorch_lightning as pl
+import cv2
+import numpy as np
 # scheduler
 from diffusers import LMSDiscreteScheduler, PNDMScheduler
 # model
-from stable_diffusion_ext import StableDiffusionQuantizer
+from stable_diffusion_quantizer import StableDiffusionQuantizer
 # utils
-import cv2
-import numpy as np
-from stable_diffusion_ext.utils import from_duffusers_ckpt
+from stable_diffusion_quantizer.utils import from_duffusers_ckpt
 
 
 def main(args):
