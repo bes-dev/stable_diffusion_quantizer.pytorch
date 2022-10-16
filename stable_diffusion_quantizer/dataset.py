@@ -51,7 +51,7 @@ class DataPipelineTTI(wds.DataPipeline):
         super().__init__(
             wds.SimpleShardList(data_path),
             wds.detshuffle(detshuffle),
-            wds.cached_tarfile_to_samples(verbose=True),
+            wds.tarfile_to_samples(),
             wds.decode(decode),
             wds.to_tuple(to_tuple),
             wds.map_tuple(
