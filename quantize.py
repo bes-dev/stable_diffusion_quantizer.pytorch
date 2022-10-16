@@ -22,6 +22,10 @@ def main(args):
     pipeline = StableDiffusionQuantizer(cfg)
     if args.ckpt is not None:
         pipeline.load_state_dict(torch.load(args.ckpt, map_location="cpu"))
+    # initialize
+    pipeline = pipeline.cuda()
+    pipeline.initialize_quantization()
+    pipeline = pipeline.cpu()
     # checkpoint callback
     checkpoint_callback = pl.callbacks.ModelCheckpoint(
         dirpath=os.getcwd() if args.checkpoint_dir is None else args.checkpoint_dir,

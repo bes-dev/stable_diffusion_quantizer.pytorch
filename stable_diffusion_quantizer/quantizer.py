@@ -57,27 +57,30 @@ class StableDiffusionQuantizer(pl.LightningModule):
         )
         # utils
         self.register_buffer("device_info", torch.tensor(0))
-        # initialize quantization
-        if cfg["trainer"]["initialize_quantization"]:
-            print("Initialize quantization")
-            self.initialize_quantization(
-                self.unet,
-                dataset=self.get_dataloader(
-                    DataPipelineTTI(
-                        data_path = cfg["initset"]["path"],
-                        tokenizer = self.tokenizer,
-                        **cfg["initset"]["params"]
-                    ),
-                    batch_size = cfg["initset"]["batch_size"],
-                    num_workers = cfg["initset"]["num_workers"]
-                )
-            )
+        # distillion mode
         self.distillation = False
         if cfg["trainer"]["distillation"]:
             self.distillation = True
             self.distillation_weight = cfg["trainer"]["distillation_weight"]
             self.unet_teacher = UNet2DConditionModel(**cfg["unet"]["cfg"])
             self.unet_teacher.load_state_dict(torch.load(cfg["unet"]["ckpt"], map_location="cpu"))
+
+    def initialize_quantization(self):
+        # initialize quantization
+        if self.cfg["trainer"]["initialize_quantization"]:
+            print("Initialize quantization")
+            self._initialize_quantization(
+                self.unet,
+                dataset=self.get_dataloader(
+                    DataPipelineTTI(
+                        data_path = self.cfg["initset"]["path"],
+                        tokenizer = self.tokenizer,
+                        **self.cfg["initset"]["params"]
+                    ),
+                    batch_size = self.cfg["initset"]["batch_size"],
+                    num_workers = self.cfg["initset"]["num_workers"]
+                )
+            )
 
     def _log_loss(self, loss, on_step=True, on_epoch=False, prog_bar=True, logger=True, exclude=["loss"]):
         for k, v in loss.items():
@@ -166,7 +169,7 @@ class StableDiffusionQuantizer(pl.LightningModule):
         )
         return opts, []
 
-    def initialize_quantization(self, m, dataset=None, conv=True, linear=True, bits=8, momentum=0.1):
+    def _initialize_quantization(self, m, dataset=None, conv=True, linear=True, bits=8, momentum=0.1):
         names = []
         if conv:
             names.extend(get_names_by_type(m, torch.nn.Conv2d))
