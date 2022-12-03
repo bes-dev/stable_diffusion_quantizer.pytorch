@@ -1,8 +1,8 @@
-import torch
 import numpy as np
 import webdataset as wds
 # utils
 from stable_diffusion_quantizer.utils import image_to_tensor
+from torch.utils.data import Dataset
 
 
 def image_preprocess(bgr2rgb=True, normalize=True, vrange=(0.0, 255.0), image_size=None, return_tensors="pt"):
@@ -59,3 +59,35 @@ class DataPipelineTTI(wds.DataPipeline):
                 txt_preprocess(tokenizer, padding, truncation, return_tensors)
             )
         )
+
+
+class TextDataset(Dataset):
+    def __init__(self, path):
+        self.data = open(path).readlines()
+
+    def __len__(self):
+        return len(self.data)
+
+    def __getitem__(self, idx):
+        return self.data[idx].rstrip()
+
+
+if __name__ == "__main__":
+    from transformers import CLIPTokenizer
+    from torch.utils.data import DataLoader
+    tokenizer = CLIPTokenizer.from_pretrained("openai/clip-vit-large-patch14")
+    with open("/tmp/tmp.txt", "w") as f:
+        for i in range(5):
+            f.write(f"str{i}\n")
+    dataset = TextDataset("/tmp/tmp.txt")
+    loader = DataLoader(dataset, batch_size=3)
+    for batch in loader:
+        tokens = tokenizer(
+            batch,
+            padding="max_length",
+            max_length=tokenizer.model_max_length,
+            truncation=True,
+            return_tensors="pt"
+        ).input_ids
+        print(tokens.size())
+        break

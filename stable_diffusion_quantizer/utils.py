@@ -1,29 +1,9 @@
 import typing
 import os
-import json
 import torch
 import torch.nn as nn
 import cv2
 import numpy as np
-
-def from_duffusers_ckpt(root_dir):
-    def load_cfg(mtype):
-        return json.load(open(os.path.join(root_dir, mtype, "config.json")))
-    cfg = {}
-    # text_encoder
-    cfg["text_encoder"] = {}
-    cfg["text_encoder"]["cfg"] = load_cfg("text_encoder")
-    cfg["text_encoder"]["ckpt"] = os.path.join(root_dir, "text_encoder", "pytorch_model.bin")
-    cfg["text_encoder"]["name"] = cfg["text_encoder"]["cfg"]["_name_or_path"]
-    # unet
-    cfg["unet"] = {}
-    cfg["unet"]["cfg"] = load_cfg("unet")
-    cfg["unet"]["ckpt"] = os.path.join(root_dir, "unet", "diffusion_pytorch_model.bin")
-    # vae
-    cfg["vae"] = {}
-    cfg["vae"]["cfg"] = load_cfg("vae")
-    cfg["vae"]["ckpt"] = os.path.join(root_dir, "vae", "diffusion_pytorch_model.bin")
-    return cfg
 
 
 def remap_layers(model: nn.Module, layers_map: typing.Dict, params: typing.Dict) -> None:

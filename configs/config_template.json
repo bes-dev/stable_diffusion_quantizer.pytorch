@@ -1,0 +1,43 @@
+{
+  "model": {
+    "model_name": "CompVis/stable-diffusion-v1-4",
+    "revision": null,
+    "use_auth_token": null,
+    "device": "cpu"
+  },
+  "trainset": {
+    "url": "https://huggingface.co/datasets/ChristophSchuhmann/MS_COCO_2017_URL_TEXT/resolve/main/mscoco.parquet",
+    "output_dir": "/workspace/data",
+    "split_ratio": 0.5,
+    "image_size": 512
+  },
+  "calibrator": {
+    "device": "cuda",
+    "conv": true,
+    "linear": true,
+    "bits": 8,
+    "steps": 10,
+    "batch_size": 1,
+    "momentum": 0.1,
+    "exclude": ["conv_in", "conv_out"]
+  },
+  "qat": {
+    "gradient_checkpointing": true,
+    "gradient_accumulation_steps": 1,
+    "mixed_precision": "fp16",
+    "logging_dir": "logs",
+    "use_8bit_adam": true,
+    "learning_rate": 5e-6,
+    "adam_beta1": 0.9,
+    "adam_beta2": 0.999,
+    "adam_weight_decay": 1e-2,
+    "adam_epsilon": 1e-8,
+    "batch_size": 32,
+    "num_workers": 1,
+    "shuffle": true,
+    "max_train_steps": 1000000,
+    "num_train_epochs": 1,
+    "checkpoint_step": 1000,
+    "max_grad_norm": 1.0
+  }
+}
